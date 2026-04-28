@@ -29,3 +29,6 @@ build/
 .idea/
 .vscode/
 *.DS_Store
+
+plan.md
+README.md
