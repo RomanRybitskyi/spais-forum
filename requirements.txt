@@ -1,0 +1,10 @@
+opencv-python
+onnxruntime
+numpy
+scipy
+filterpy
+Pillow
+ultralytics
+# insightface
+fastapi
+uvicorn[standard]

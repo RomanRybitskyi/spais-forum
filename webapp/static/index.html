@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPAIS</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>🛡️ SPAIS</h1>
+    <div class="status-pill" id="statusPill">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">stopped</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT: video + drawing overlay -->
+    <section class="video-pane">
+      <div class="video-wrap" id="videoWrap">
+        <img id="videoStream" src="" alt="video stream" />
+        <canvas id="overlay"></canvas>
+        <div class="hint" id="drawHint">Click to add points · double-click or "Finish" to commit · Esc to cancel</div>
+      </div>
+      <div class="zone-controls">
+        <button id="btnDraw">✏️ Draw zone</button>
+        <button id="btnFinish" disabled>✅ Finish</button>
+        <button id="btnCancel" disabled>✖ Cancel</button>
+        <button id="btnResetZone">↺ Reset to default</button>
+      </div>
+    </section>
+
+    <!-- RIGHT: controls + stats -->
+    <aside class="control-pane">
+      <div class="card">
+        <h2>Pipeline</h2>
+        <div class="row">
+          <button id="btnStart" class="primary">▶ Start</button>
+          <button id="btnStop">■ Stop</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Scenario</h2>
+        <div class="scenario-list" id="scenarioList"></div>
+      </div>
+
+      <div class="card">
+        <h2>Statistics</h2>
+        <div class="stats-grid" id="zoneStats">
+          <div class="stat"><div class="stat-label">Total entered</div><div class="stat-value" id="statTotal">–</div></div>
+          <div class="stat"><div class="stat-label">Inside now</div><div class="stat-value" id="statInside">–</div></div>
+          <div class="stat"><div class="stat-label">Avg dwell</div><div class="stat-value" id="statAvg">–</div></div>
+          <div class="stat"><div class="stat-label">Longest dwell</div><div class="stat-value" id="statLongest">–</div></div>
+          <div class="stat"><div class="stat-label">FPS</div><div class="stat-value" id="statFps">–</div></div>
+          <div class="stat"><div class="stat-label">Latencies (ms)</div><div class="stat-value small" id="statLat">–</div></div>
+        </div>
+
+        <div id="emotionPanel" class="hidden">
+          <div class="stats-grid">
+            <div class="stat"><div class="stat-label">Faces</div><div class="stat-value" id="statFaces">–</div></div>
+            <div class="stat"><div class="stat-label">Dominant</div><div class="stat-value" id="statEmotion">–</div></div>
+            <div class="stat"><div class="stat-label">FPS</div><div class="stat-value" id="statFps2">–</div></div>
+            <div class="stat"><div class="stat-label">Latencies (ms)</div><div class="stat-value small" id="statLat2">–</div></div>
+          </div>
+          <div class="chart-label">Emotion distribution (last 90 frames)</div>
+          <canvas id="emotionChart" width="320" height="160"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Display options</h2>
+        <label class="toggle">
+          <input type="checkbox" id="chkAnon" /> Anonymise gender labels
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="chkDebug" /> Show debug HUD
+        </label>
+      </div>
+    </aside>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
+
