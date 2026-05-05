@@ -18,8 +18,6 @@
 | RAM | 4 GB |
 | CPU | 4+ ядра (рекомендовано) |
 
-> GPU **не потрібен** — всі моделі працюють на CPU через ONNX Runtime.
-
 ---
 
 ## 1. Клонування репозиторію
@@ -44,12 +42,6 @@ python -m venv venv
 python3 -m venv venv
 source venv/bin/activate
 ```
-
-> Якщо PowerShell блокує виконання скриптів, виконай один раз:
-> ```powershell
-> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-> ```
-
 ---
 
 ## 3. Встановлення залежностей
