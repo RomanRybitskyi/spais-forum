@@ -11,8 +11,6 @@ dist/
 build/
 .eggs/
 
-*.pt
-*.onnx
 
 *.mp4
 *.avi
