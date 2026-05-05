@@ -30,5 +30,4 @@ build/
 .vscode/
 *.DS_Store
 
-plan.md
 README.md

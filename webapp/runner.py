@@ -66,6 +66,7 @@ class PipelineRunner:
 
         self._emotion_history: deque = deque(maxlen=config.EMOTION_HISTORY_LEN)
         self._face_gender_cache: dict = {}
+        self._face_emotion_cache: dict = {}
         self._prev_scenario: int = 1
         self._scenario_changed = threading.Event()
 
@@ -174,6 +175,7 @@ class PipelineRunner:
                     frame_times.clear()
                     self._emotion_history.clear()
                     self._face_gender_cache.clear()
+                    self._face_emotion_cache.clear()
                     last_t = time.perf_counter()
 
                 ret, frame = cap.read()
@@ -317,6 +319,7 @@ class PipelineRunner:
         primary_label = "Unknown"
 
         run_gender = (frame_idx % max(1, config.CLASSIFIER_FRAME_STRIDE) == 0)
+        run_emotion = (frame_idx % max(1, getattr(config, 'EMOTION_FRAME_STRIDE', 6)) == 0)
         active_slots: set = set()
 
         for slot, det in enumerate(faces):
@@ -324,9 +327,13 @@ class PipelineRunner:
                 frame, det, output_size=config.FACE_ALIGN_SIZE,
             )
 
-            te0 = time.perf_counter()
-            label, score, all_scores = self.emotion.predict(crop)
-            t_emo += (time.perf_counter() - te0) * 1000
+            if run_emotion or slot not in self._face_emotion_cache:
+                te0 = time.perf_counter()
+                label, score, all_scores = self.emotion.predict(crop)
+                t_emo += (time.perf_counter() - te0) * 1000
+                self._face_emotion_cache[slot] = (label, score, all_scores)
+            else:
+                label, score, all_scores = self._face_emotion_cache[slot]
 
             if score < config.EMOTION_CONF_THRESHOLD:
                 label_disp = "Unknown"
@@ -354,6 +361,8 @@ class PipelineRunner:
 
         for stale in set(self._face_gender_cache) - active_slots:
             self._face_gender_cache.pop(stale, None)
+        for stale in set(self._face_emotion_cache) - active_slots:
+            self._face_emotion_cache.pop(stale, None)
 
         self._emotion_history.append(primary_label)
 
