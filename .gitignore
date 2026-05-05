@@ -17,15 +17,8 @@ build/
 *.mov
 *.mkv
 
-*.jpg
-*.jpeg
-*.png
-*.bmp
-
 .env
 *.log
 .idea/
 .vscode/
 *.DS_Store
-
-README.md
