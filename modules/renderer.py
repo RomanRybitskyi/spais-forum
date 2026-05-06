@@ -166,9 +166,11 @@ class Renderer:
         icon_h = icon.shape[0] if icon is not None else 0
         bar_w = tw + 8 + icon_w
         bar_h = max(th + 10, icon_h + 4)
-        bx1, by1 = x1, y2 + 2
-        bx2, by2 = x1 + bar_w, y2 + 2 + bar_h
-        cv2.rectangle(frame, (bx1, by1), (bx2, by2), colour, -1)
+        bx1, by1 = x1, y1
+        bx2, by2 = min(W - 1, x1 + bar_w), y1 + bar_h
+        overlay = frame.copy()
+        cv2.rectangle(overlay, (bx1, by1), (bx2, by2), colour, -1)
+        cv2.addWeighted(overlay, 0.6, frame, 0.4, 0, dst=frame)
 
         text_x = x1 + 4
         if icon is not None:
