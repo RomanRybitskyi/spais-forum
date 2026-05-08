@@ -82,13 +82,15 @@ def main() -> None:
         stats = zone.stats()
         t_zone = (time.perf_counter() - t0) * 1000
 
-        renderer.draw_zone(frame, zone.contour)
+        flash_ids = zone.recently_entered_ids()
+        renderer.draw_zone(frame, zone.contour, flash=bool(flash_ids))
         for trk in tracks:
             renderer.draw_track(
                 frame, trk,
                 in_zone=zone.is_inside(trk.bottom_centre),
                 gender_label=gender_cache.get(trk.id, "?"),
                 helmet_label=helmet_cache.get(trk.id, "unknown"),
+                flash=trk.id in flash_ids,
             )
 
         now = time.perf_counter()

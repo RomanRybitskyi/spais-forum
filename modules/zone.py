@@ -26,6 +26,7 @@ class ZoneAnalytics:
     completed_dwells: list[float] = field(default_factory=list)
     last_seen: dict[int, float] = field(default_factory=dict)
     stale_timeout: float = 2.0
+    recent_entry_times: dict[int, float] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self._contour = np.array(self.polygon, dtype=np.int32).reshape(-1, 1, 2)
@@ -63,6 +64,7 @@ class ZoneAnalytics:
             if inside:
                 if trk.id not in self.entry_times:
                     self.entry_times[trk.id] = now
+                    self.recent_entry_times[trk.id] = now
                     if trk.id not in self.entered_ids:
                         self.entered_ids.add(trk.id)
             else:
@@ -74,6 +76,13 @@ class ZoneAnalytics:
             if (now - self.last_seen.get(tid, 0)) > self.stale_timeout:
                 dwell = now - self.entry_times.pop(tid)
                 self.completed_dwells.append(dwell)
+
+    def recently_entered_ids(self, duration: float = 1.0) -> set[int]:
+        now = time.time()
+        return {tid for tid, t in self.recent_entry_times.items() if now - t <= duration}
+
+    def any_recent_entry(self, duration: float = 1.0) -> bool:
+        return bool(self.recently_entered_ids(duration))
 
     def stats(self) -> ZoneStats:
         now = time.time()

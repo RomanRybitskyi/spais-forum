@@ -90,11 +90,13 @@ class Renderer:
         alpha = ov[:, :, 3:4].astype(np.float32) / 255.0
         roi[:] = (alpha * ov[:, :, :3] + (1 - alpha) * roi).astype(np.uint8)
 
-    def draw_zone(self, frame: np.ndarray, contour: np.ndarray) -> None:
+    def draw_zone(self, frame: np.ndarray, contour: np.ndarray, flash: bool = False) -> None:
         overlay = frame.copy()
         cv2.fillPoly(overlay, [contour], (60, 180, 60))
         cv2.addWeighted(overlay, 0.15, frame, 0.85, 0, dst=frame)
-        cv2.polylines(frame, [contour], isClosed=True, color=COLOUR_GREEN, thickness=2)
+        border_colour = COLOUR_RED if flash else COLOUR_GREEN
+        border_thickness = 4 if flash else 2
+        cv2.polylines(frame, [contour], isClosed=True, color=border_colour, thickness=border_thickness)
 
     @staticmethod
     def _square_box(x1: int, y1: int, x2: int, y2: int,
@@ -116,10 +118,11 @@ class Renderer:
         in_zone: bool,
         gender_label: str,
         helmet_label: str,
+        flash: bool = False,
     ) -> None:
         H, W = frame.shape[:2]
         ox1, oy1, ox2, oy2 = track.box
-        colour = COLOUR_GREEN if in_zone else COLOUR_WHITE
+        colour = COLOUR_RED if flash else (COLOUR_GREEN if in_zone else COLOUR_WHITE)
 
         if helmet_label == "helmet":
             x1, y1, x2, y2 = self._square_box(ox1, oy1, ox2, oy2, W, H)
